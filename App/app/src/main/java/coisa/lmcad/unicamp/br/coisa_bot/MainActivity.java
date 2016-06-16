@@ -18,7 +18,8 @@ public class MainActivity extends AppCompatActivity {
 
     @android.webkit.JavascriptInterface
     public void onData(String value) {
-        ThingMonitor.instance.sendBinary(value);
+        if (CoisaBluetooth.getInstance() != null && CoisaBluetooth.getInstance().isConnected()) ThingMonitor.instance.sendBinary(value);
+        else CoisaBluetooth.getInstance().connect();
     }
 
     @Override
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
         webview.setWebChromeClient(new WebChromeClient() {
             public boolean onConsoleMessage(ConsoleMessage cm) {
-                onData(cm.message());
+                onData(cm.message()); //Way of bypassing the bug on javascript interface happening on the galaxy tab
                 Log.d("MyApplication", cm.message() + " -- From line "
                         + cm.lineNumber() + " of "
                         + cm.sourceId());

@@ -5,11 +5,11 @@ package coisa.lmcad.unicamp.br.coisa_bot;
  */
 public class ThingMonitor {
 
-    public static ThingMonitor instance = new ThingMonitor();
-
     private ThingMonitor() {
 
     }
+
+    final public static ThingMonitor instance = new ThingMonitor();
 
     private int position = 0;
     String expected = "";
@@ -57,7 +57,7 @@ public class ThingMonitor {
         }
 
         System.out.println(array);
-        CoisaBluetooth.instance.writeToCoisa(array);
+        CoisaBluetooth.getInstance().writeToCoisa(array);
 //        coisaCharacteristic.setValue(array);
 //        coisaGATT.writeCharacteristic(coisaCharacteristic);
         position += qtty;
