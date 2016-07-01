@@ -22,17 +22,46 @@ public class MainActivity extends AppCompatActivity {
         else CoisaBluetooth.getInstance().connect();
     }
 
+    @android.webkit.JavascriptInterface
+    public void onReset() {
+        if (CoisaBluetooth.getInstance() != null && CoisaBluetooth.getInstance().isConnected()) ThingMonitor.instance.reset();
+        else CoisaBluetooth.getInstance().connect();
+    }
+
+    public void makeToast(String text) {
+        final String message = text;
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        CoisaBluetooth.getInstance().setMain(this);
+        ThingMonitor.instance.setMain(this);
+
         final android.webkit.WebView webview = (android.webkit.WebView) findViewById(R.id.webView);
-        webview.clearCache(true);
+//        webview.clearCache(true);
         WebSettings settings = webview.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         webview.addJavascriptInterface(this, "android");
+        settings.setAllowContentAccess(true);
+        settings.setAllowFileAccess(true);
+        settings.setAppCacheEnabled(true);
+        settings.setLoadWithOverviewMode(true);
+        settings.setLoadsImagesAutomatically(true);
+        settings.setUseWideViewPort(true);
+//        settings.setPluginState(PluginState.ON);
+//        settings.setJavaScriptEnabled(true);
+//        settings.setSupportZoom(true);
+//        settings.setBuiltInZoomControls(true);
         webview.setScrollBarStyle(android.webkit.WebView.SCROLLBARS_OUTSIDE_OVERLAY);
 
         webview.setWebChromeClient(new WebChromeClient() {

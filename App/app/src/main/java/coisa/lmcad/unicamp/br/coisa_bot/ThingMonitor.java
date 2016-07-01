@@ -15,6 +15,19 @@ public class ThingMonitor {
     String expected = "";
     String toSend = "";
 
+    private MainActivity context;
+
+    public void setMain(MainActivity act) {
+        context = act;
+    }
+
+    public void reset() {
+        expected = "RS-OK";
+        position = 0;
+        toSend = "RS";
+        sendNext(2);
+    }
+
     public void sendBinary(String binary) {
         String value = "RD";
         expected = "RD-OK";
@@ -29,19 +42,33 @@ public class ThingMonitor {
         if (received.equals(expected)) {
             if (expected.equals("RD-OK")) {
 //                Toast.makeText(MainActivity.this, "Starting to Send!", Toast.LENGTH_LONG).show();
+                if (context != null) {
+                    context.makeToast("Starting to Send!");
+                }
                 System.out.println("Starting to Send!");
                 expected = "k";
                 sendNext(2); //Sends size
             }
             else if (expected.equals("k") & (position) == toSend.length()) { //End of buffer
 //                Toast.makeText(MainActivity.this, "Sending Complete!", Toast.LENGTH_LONG).show();
+                if (context != null) {
+                    context.makeToast("Sending Complete!");
+                }
                 System.out.println("Sending Complete!");
                 expected = "";
+            }
+            else if (expected.equals("RS-OK")) {
+                if (context != null) {
+                    context.makeToast("Reset!");
+                }
             }
             else {
                 sendNext(Math.min(20, toSend.length() - position)); //Keeps sending code
             }
         } else {
+            if (context != null) {
+                context.makeToast("Protocol error :(");
+            }
 //            Toast.makeText(MainActivity.this, "Error sending: expected<" + expected + "> received <" + received + ">", Toast.LENGTH_LONG).show();
             System.out.println("Error sending: expected<" + expected + "> received <" + received + ">");
         }

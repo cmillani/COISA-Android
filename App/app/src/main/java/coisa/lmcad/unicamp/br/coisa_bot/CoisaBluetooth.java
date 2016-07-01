@@ -21,10 +21,19 @@ public class CoisaBluetooth {
     InputStream coisaIn;
     OutputStream coisaOut;
 
+    private MainActivity context;
+
+    public void setMain(MainActivity act) {
+        context = act;
+    }
+
     private Thread monitor;
     private CoisaBluetooth() {
         monitor = new Thread(new Runnable() {
             public void run() {
+                if (context != null) {
+                    context.makeToast("Trying to Connect");
+                }
                 try {
                     BluetoothDevice coisa = mBluetoothAdapter.getRemoteDevice("20:14:10:15:09:68");
                     connection = coisa.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
@@ -34,6 +43,9 @@ public class CoisaBluetooth {
                 } catch (Exception e) {
                     e.printStackTrace();
                     return;
+                }
+                if (context != null) {
+                    context.makeToast("Connected");
                 }
                 while (true) {
                     try {
@@ -90,6 +102,7 @@ public class CoisaBluetooth {
         try {
             coisaOut.write(buffer);
         } catch (IOException e) {
+            context.makeToast("Connection Error");
             instance = new CoisaBluetooth();
             e.printStackTrace();
         }
